@@ -34,6 +34,12 @@ fn day1_part2(path: &str) -> u32 {
     top_three.iter().sum()
 }
 
+fn main() {
+    let res = day1_part1("../data/1.txt");
+    println!("Part1: {}", res);
+    let res = day1_part2("../data/1.txt");
+    println!("Part2: {}", res);
+}
 
 #[test]
 fn is_corrent_by_example_part1() {
