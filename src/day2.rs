@@ -101,29 +101,52 @@ impl Round {
 
         return result.score() + self.1.score();
     }
+
+    fn score_part2(&self) -> usize {
+        let game_result = match self.1 {
+            Move::Rock => GameResult::Lose,
+            Move::Paper => GameResult::Draw,
+            Move::Scissor => GameResult::Win,
+        };
+
+        let result = match (&self.0, &game_result) {
+            (Move::Rock, GameResult::Win) => Move::Paper,
+            (Move::Rock, GameResult::Draw) => Move::Rock,
+            (Move::Rock, GameResult::Lose) => Move::Scissor,
+            (Move::Paper, GameResult::Lose) => Move::Rock,
+            (Move::Paper, GameResult::Draw) => Move::Paper,
+            (Move::Paper, GameResult::Win) => Move::Scissor,
+            (Move::Scissor, GameResult::Win) => Move::Rock,
+            (Move::Scissor, GameResult::Lose) => Move::Paper,
+            (Move::Scissor, GameResult::Draw) => Move::Scissor,
+        };
+
+        return result.score() + game_result.score();
+    }
 }
 
 fn main() -> Result<()> {
-    let file = fs::read_to_string("./data/2.txt")?;
+    let input = fs::read_to_string("./data/2.txt")?;
+    //let input = fs::read_to_string("./data/2.example.txt")?;
 
-    let game: Vec<usize> = file
+    let game: Vec<Round> = input
+        .trim_end()
         .split("\n")
         .map(|line| {
             let parsed = line.split_once(" ").map(|item| Round::new(item));
 
             if let Some(result) = parsed {
-                return result.score();
+                return result;
             }
 
-            return 0;
+            return Round::default();
         })
         .collect();
 
-    println!("{:?}", game);
-
-    let sum: usize = game.iter().sum();
-
-    println!("{}", sum);
+    let sum_part1: usize = game.iter().map(|x| x.score()).sum();
+    let sum_part2: usize = game.iter().map(|x| x.score_part2()).sum();
+    println!("Part 1: {}", sum_part1);
+    println!("Part 2: {}", sum_part2);
 
     Ok(())
 }
