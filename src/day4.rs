@@ -8,43 +8,29 @@ fn main() -> Result<()> {
         .trim_end()
         .split("\n")
         .map(|line| {
-            let pairs: Vec<&str> = line.split(",").collect();
+            let (first, second): (&str, &str) = line.split_once(",").unwrap();
 
-            let mut sections: Vec<String> = Vec::new();
+            let (first_start, first_end): (usize, usize) = match first.split_once("-") {
+                Some((s, e)) => (s.parse::<usize>().unwrap(), e.parse::<usize>().unwrap()),
+                None => (0, 0),
+            };
 
-            // print!("{line}");
-            for part in pairs {
-                let (start, end) = if let Some((s, e)) = part.split_once("-") {
-                    (s.parse::<usize>().unwrap(), e.parse::<usize>().unwrap())
-                } else {
-                    (0, 0)
-                };
+            let (second_start, second_end): (usize, usize) = match second.split_once("-") {
+                Some((s, e)) => (s.parse::<usize>().unwrap(), e.parse::<usize>().unwrap()),
+                None => (0, 0),
+            };
 
-                // print!(" start {} end {}", start, end);
-
-                let mut part1 = "".to_string();
-                if start != end {
-                    for i in start..end+1 {
-                        part1 += &i.to_string();
-                    }
-                } else {
-                    part1 += &start.to_string();
-                }
-
-                sections.push(part1);
-            }
-            // print!("\n");
-
-            let mut response = 0;
-            if let Some(first) = sections.get(0) {
-                if let Some(second) = sections.get(1) {
-                    if first.contains(second) || second.contains(first) {
-                        response = 1;
-                    }
-                }
+            let mut result = 0;
+            if first_start <= second_start && first_end >= second_end {
+                result = 1;
+            } else if second_start <= first_start && second_end >= first_end {
+                result = 1;
             }
 
-            return response;
+            println!(
+                "{result} - {first_start}-{first_end},{second_start}-{second_end} ----- {line}"
+            );
+            return result;
         })
         .collect();
 
