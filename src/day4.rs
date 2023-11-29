@@ -20,16 +20,15 @@ fn main() -> Result<()> {
                 None => (0, 0),
             };
 
-            let mut result = 0;
-            if first_start <= second_start && first_end >= second_end {
-                result = 1;
-            } else if second_start <= first_start && second_end >= first_end {
-                result = 1;
+            let mut result = 1;
+            if (first_end < second_start) || (second_end < first_start) {
+                result = 0;
             }
 
             println!(
                 "{result} - {first_start}-{first_end},{second_start}-{second_end} ----- {line}"
             );
+
             return result;
         })
         .collect();
